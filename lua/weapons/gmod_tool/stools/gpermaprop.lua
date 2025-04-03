@@ -206,6 +206,22 @@ function gPermaProp:BlockMovement()
 					return false
 				end
 			end)
+
+			hook.Add("CanTool", "gPermaProp_RemoveTool" .. index, function(ply, tr, toolName, tool, button)
+				if not IsValid(tr.Entity) then return end
+
+				if tr.Entity == entIndex then
+					--print("attmepted to do something")
+					print(tostring(toolName))
+					if toolName != "gpermaprop" then return false end
+
+					return true
+				end
+			end)
+
+			hook.Add("CanProperty", "gPermaProp_RemoveContext" .. index, function(ply, property, ent)
+				return false
+			end)
 		end
 	end
 end
@@ -275,10 +291,11 @@ function TOOL:RightClick(trace)
 
 	local res = sql.Query(q)
 
-	if not res then
+	if res then
 		print("Error deleting prop: " .. sql.LastError())
 	end
 
+	print("Removed Prop")
 	gPermaProp.BlockedMovement[ent:EntIndex()] = false 
 	hook.Remove("PhysgunPickup", "gBlockMovement" .. index)
 
